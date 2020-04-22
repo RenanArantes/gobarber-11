@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components'
+import { createGlobalStyle } from 'styled-components';
 
 export default createGlobalStyle`
   * {
@@ -9,7 +9,28 @@ export default createGlobalStyle`
   }
 
   body {
-    background: #312E38;
+    background: linear-gradient(165deg, #312e38, #614627);
+    background-size: 400% 400%;
+
+    -webkit-animation: AnimationName 30s ease infinite;
+    -moz-animation: AnimationName 30s ease infinite;
+    animation: AnimationName 30s ease infinite;
+
+    @-webkit-keyframes AnimationName {
+        0%{background-position:27% 0%}
+        50%{background-position:74% 100%}
+        100%{background-position:27% 0%}
+    }
+    @-moz-keyframes AnimationName {
+        0%{background-position:27% 0%}
+        50%{background-position:74% 100%}
+        100%{background-position:27% 0%}
+    }
+    @keyframes AnimationName {
+        0%{background-position:27% 0%}
+        50%{background-position:74% 100%}
+        100%{background-position:27% 0%}
+    }
     color: #FFF;
     -webkit-font-smoothing: antialiased;
   }
