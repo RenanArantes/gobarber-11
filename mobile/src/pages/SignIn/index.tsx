@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
 import {
   Image,
   View,
@@ -8,7 +8,8 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
-
+import { Form } from '@unform/mobile';
+import { FormHandles } from '@unform/core';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
@@ -24,7 +25,12 @@ import {
 } from './styles';
 
 const SignIn: React.FC = () => {
+  const formRef = useRef<FormHandles>(null);
   const navigation = useNavigation();
+
+  const handleSignIn = useCallback((data: object) => {
+    console.log(data);
+  }, []);
 
   return (
     <>
@@ -44,10 +50,22 @@ const SignIn: React.FC = () => {
               <Title>Faca seu logon</Title>
             </View>
 
-            <Input name="email" icon="mail" placeholder="Digite seu email" />
-            <Input name="password" icon="key" placeholder="Digite sua senha" />
+            <Form ref={formRef} onSubmit={handleSignIn}>
+              <Input name="email" icon="mail" placeholder="Digite seu email" />
+              <Input
+                name="password"
+                icon="key"
+                placeholder="Digite sua senha"
+              />
 
-            <Button onPress={() => {}}>Entrar</Button>
+              <Button
+                onPress={() => {
+                  formRef.current?.submitForm();
+                }}
+              >
+                Entrar
+              </Button>
+            </Form>
 
             <ForgotPassword onPress={() => {}}>
               <ForgotPasswordText>Esqueci minha senha</ForgotPasswordText>
