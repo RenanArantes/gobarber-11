@@ -17,6 +17,7 @@ import * as Yup from 'yup';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
+import api from '../../services/api';
 import getValidationErros from '../../utils/getValidationErrors';
 
 import logoImg from '../../assets/logo.png';
@@ -36,38 +37,54 @@ const SignUp: React.FC = () => {
   const emailInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
 
-  const handleSubmit = useCallback(async (data: SignUpFormData) => {
-    try {
-      formRef.current?.setErrors({});
+  const handleSubmit = useCallback(
+    async (data: SignUpFormData) => {
+      try {
+        formRef.current?.setErrors({});
 
-      const schema = Yup.object().shape({
-        name: Yup.string().required('Nome obrigatorio'),
-        email: Yup.string()
-          .required('E-mail obrigatorio')
-          .email('Digite um e-mail valido'),
-        password: Yup.string().min(6, 'No minimo seis digitos'),
-      });
+        const schema = Yup.object().shape({
+          name: Yup.string().required('Nome obrigatorio'),
+          email: Yup.string()
+            .required('E-mail obrigatorio')
+            .email('Digite um e-mail valido'),
+          password: Yup.string().min(6, 'No minimo seis digitos'),
+        });
 
-      await schema.validate(data, {
-        abortEarly: false,
-      });
+        console.log('Schema criado');
 
-      Alert.alert(
-        'Cadastro Relizado!',
-        'Voce ja pode fazer seu logon no GoBarber!',
-      );
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const errors = getValidationErros(err);
+        await schema.validate(data, {
+          abortEarly: false,
+        });
 
-        formRef.current?.setErrors(errors);
+        console.log('Schema true');
 
-        return;
+        console.log(
+          `data > Name:${data.name} | Email:${data.email} | Password:${data.password}`,
+        );
+        await api.post('/users', data);
+
+        console.log('Api ok');
+
+        Alert.alert(
+          'Cadastro Relizado!',
+          'Voce ja pode fazer seu logon no GoBarber!',
+        );
+
+        navigation.goBack();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErros(err);
+
+          formRef.current?.setErrors(errors);
+
+          return;
+        }
+
+        Alert.alert('Erro no Cadastro!', 'Confira os dados inseridos!');
       }
-
-      Alert.alert('Erro no Cadastro!', 'Confira os dados inseridos!');
-    }
-  }, []);
+    },
+    [navigation],
+  );
 
   return (
     <>
