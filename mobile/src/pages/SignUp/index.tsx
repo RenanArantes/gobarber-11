@@ -50,20 +50,11 @@ const SignUp: React.FC = () => {
           password: Yup.string().min(6, 'No minimo seis digitos'),
         });
 
-        console.log('Schema criado');
-
         await schema.validate(data, {
           abortEarly: false,
         });
 
-        console.log('Schema true');
-
-        console.log(
-          `data > Name:${data.name} | Email:${data.email} | Password:${data.password}`,
-        );
         await api.post('/users', data);
-
-        console.log('Api ok');
 
         Alert.alert(
           'Cadastro Relizado!',
