@@ -5,8 +5,9 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "dev:server": "ts-node-dev --inspect --transpileOnly --ignore-watch node_modules src/server.ts",
-    "typeorm": "ts-node-dev ./node_modules/typeorm/cli.js"
+    "dev:server": "ts-node-dev -r tsconfig-paths/register --inspect --transpileOnly --ignore-watch node_modules src/shared/infra/http/server.ts",
+    "start": "src/shared/infra/http/server.ts",
+    "typeorm": "ts-node-dev -r tsconfig-paths/register ./node_modules/typeorm/cli.js"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
@@ -28,6 +29,7 @@
     "supertest": "^4.0.2",
     "ts-jest": "^25.3.1",
     "ts-node-dev": "^1.0.0-pre.44",
+    "tsconfig-paths": "^3.9.0",
     "typescript": "^3.8.3"
   },
   "dependencies": {
