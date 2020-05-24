@@ -74,3 +74,5 @@
 - O usuario nao pode agendar em um horario ja ocupado;
 - O usuario nao pode agendar em um horario que ja passou;
 - O usuario nao pode agendar servicos consigo mesmo;
+
+-
