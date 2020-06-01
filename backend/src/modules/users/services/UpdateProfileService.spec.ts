@@ -37,6 +37,16 @@ describe('UpdateProfile', () => {
     expect(updatedUser.email).toBe('irinois@email.com');
   });
 
+  it('should not be able to update a non-existent profile', async () => {
+    expect(
+      updateProfile.execute({
+        user_id: 'non-existing-user-id',
+        name: 'Irineu',
+        email: 'irineu@email.com',
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+  });
+
   it('should not be able to update the email to another user email', async () => {
     await fakeUserRepository.create({
       name: 'Irineu',
