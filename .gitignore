@@ -9,3 +9,6 @@ backend/coverage/
 
 tmp/*
 !tmp/.gitkeep
+
+.env
+ormconfig.json
