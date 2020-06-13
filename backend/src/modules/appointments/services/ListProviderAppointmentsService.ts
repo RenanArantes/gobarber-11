@@ -27,9 +27,9 @@ class ListProviderAppointmentsService {
     month,
     year,
   }: IRequest): Promise<Appointment[]> {
-    const cacheData = await this.cacheProvider.recover('asd');
+    // const cacheData = await this.cacheProvider.recover('asd');
 
-    console.log(cacheData);
+    // console.log(cacheData);
 
     const appointments = await this.appointmentsRepository.findAllInDayFromProvider(
       {
