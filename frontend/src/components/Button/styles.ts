@@ -16,6 +16,20 @@ export const Container = styled.button`
   &:hover {
     background: ${shade(0.2, '#ff9000')};
   }
+
+  svg {
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  }
 `;
 
 export default Container;
