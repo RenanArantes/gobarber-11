@@ -19,7 +19,14 @@ const Dashboard: React.FC = () => {
           <img src={logoImg} alt="Gobarber" />
 
           <Profile>
-            <img src={user.avatar_url} alt="{user.name}" />
+            <img
+              src={
+                user.avatar_url
+                  ? user.avatar_url
+                  : 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn3.iconfinder.com%2Fdata%2Ficons%2Flogin-4%2F512%2FLOGIN-10-512.png'
+              }
+              alt="{user.name}"
+            />
             <div>
               <span>Bem-vindo,</span>
               <strong>{user.name}</strong>
