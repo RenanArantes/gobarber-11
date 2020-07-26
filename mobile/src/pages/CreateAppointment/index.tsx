@@ -1,9 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
 import { Platform } from 'react-native';
+import { format } from 'date-fns';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
+import { setLocale } from 'yup';
 import api from '../../services/api';
 import { useAuth } from '../../hooks/auth';
 
@@ -36,7 +38,7 @@ interface RouteParams {
 
 interface AvailabilityItem {
   hour: number;
-  availability: boolean;
+  available: boolean;
 }
 
 const CreateAppointment: React.FC = () => {
@@ -44,15 +46,13 @@ const CreateAppointment: React.FC = () => {
   const route = useRoute();
   const { goBack } = useNavigation();
 
-  const routeParams = route.params as RouteParams;
+  const { providerId } = route.params as RouteParams;
 
   const [availability, setAvailability] = useState<AvailabilityItem[]>([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [providers, setProviders] = useState<Provider[]>([]);
-  const [selectedProvider, setSelectedProvider] = useState(
-    routeParams.providerId,
-  );
+  const [selectedProvider, setSelectedProvider] = useState(providerId);
 
   useEffect(() => {
     api.get('providers').then((response) => {
@@ -72,14 +72,14 @@ const CreateAppointment: React.FC = () => {
       .then((response) => {
         setAvailability(response.data);
       });
-  }, [selectedDate]);
+  }, [selectedDate, selectedProvider]);
 
   const navigateBack = useCallback(() => {
     goBack();
   }, [goBack]);
 
-  const handleSelectProvider = useCallback((providerId: string) => {
-    setSelectedProvider(providerId);
+  const handleSelectProvider = useCallback((id: string) => {
+    setSelectedProvider(id);
   }, []);
 
   const handleToggleDatePicker = useCallback(() => {
@@ -93,6 +93,30 @@ const CreateAppointment: React.FC = () => {
 
     date && setSelectedDate(date);
   }, []);
+
+  const morningAvailability = useMemo(() => {
+    return availability
+      .filter(({ hour }) => hour < 12)
+      .map(({ hour, available }) => {
+        return {
+          hour,
+          available,
+          hourFormated: format(new Date().setHours(hour), 'HH:00'),
+        };
+      });
+  }, [availability]);
+
+  const afternoonAvailability = useMemo(() => {
+    return availability
+      .filter(({ hour }) => hour >= 12)
+      .map(({ hour, available }) => {
+        return {
+          hour,
+          available,
+          hourFormated: format(new Date().setHours(hour), 'HH:00'),
+        };
+      });
+  }, [availability]);
 
   return (
     <Container>
@@ -117,22 +141,20 @@ const CreateAppointment: React.FC = () => {
           showsHorizontalScrollIndicator
           data={providers}
           keyExtractor={(provider) => provider.id}
-          renderItem={({ item: provider }) => (
+          renderItem={({ item }) => (
             <ProviderContainer
-              onPress={() => {
-                handleSelectProvider(provider.id);
-              }}
-              selected={provider.id === selectedProvider}
+              onPress={() => handleSelectProvider(item.id)}
+              selected={item.id === selectedProvider}
             >
               <ProviderAvatar
                 source={{
                   uri:
-                    provider.avatar_url ||
+                    item.avatar_url ||
                     'https://cdn.onlinewebfonts.com/svg/img_569204.png',
                 }}
               />
-              <ProviderName selected={provider.id === selectedProvider}>
-                {provider.name}
+              <ProviderName selected={item.id === selectedProvider}>
+                {item.name}
               </ProviderName>
             </ProviderContainer>
           )}
@@ -157,6 +179,14 @@ const CreateAppointment: React.FC = () => {
           />
         )}
       </Calendar>
+
+      {morningAvailability.map(({ hourFormated, available }) => (
+        <Title key={hourFormated}>{`${hourFormated} - ${available}`}</Title>
+      ))}
+
+      {morningAvailability.map(({ hourFormated, available }) => (
+        <Title key={hourFormated}>{`${hourFormated} - ${available}`}</Title>
+      ))}
     </Container>
   );
 };
