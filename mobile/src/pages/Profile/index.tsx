@@ -26,16 +26,21 @@ import {
   Title,
   UserAvatarButton,
   UserAvatar,
+  Separator,
+  SignOutButton,
+  SignOutButtonText,
 } from './styles';
 
-interface SignUpFormData {
+interface ProfileFormData {
   name: string;
   email: string;
+  old_password: string;
   password: string;
+  password_confirmation: string;
 }
 
 const Profile: React.FC = () => {
-  const { user } = useAuth();
+  const { user, updateUser, signOut } = useAuth();
 
   const formRef = useRef<FormHandles>(null);
   const navigation = useNavigation();
@@ -46,7 +51,7 @@ const Profile: React.FC = () => {
   const confirmPasswordInputRef = useRef<TextInput>(null);
 
   const handleSubmit = useCallback(
-    async (data: SignUpFormData) => {
+    async (data: ProfileFormData) => {
       try {
         formRef.current?.setErrors({});
 
@@ -55,19 +60,48 @@ const Profile: React.FC = () => {
           email: Yup.string()
             .required('E-mail obrigatorio')
             .email('Digite um e-mail valido'),
-          password: Yup.string().min(6, 'No minimo seis digitos'),
+          old_password: Yup.string(),
+          password: Yup.string().when('old_password', {
+            is: (val) => !!val.length,
+            then: Yup.string().required('Campo obrigatorio'),
+            otherwise: Yup.string(),
+          }),
+          password_confirmation: Yup.string().when('old_password', {
+            is: (val) => !!val.length,
+            then: Yup.string().required('Campo obrigatorio'),
+            otherwise: Yup.string(),
+          }),
         });
 
         await schema.validate(data, {
           abortEarly: false,
         });
 
-        await api.post('/users', data);
+        const {
+          name,
+          email,
+          old_password,
+          password,
+          password_confirmation,
+        } = data;
 
-        Alert.alert(
-          'Cadastro Relizado!',
-          'Voce ja pode fazer seu logon no GoBarber!',
-        );
+        const formData = {
+          name,
+          email,
+          ...(old_password
+            ? {
+                old_password,
+                password,
+                password_confirmation,
+              }
+            : {}),
+        };
+
+        const response = await api.put('/profile', formData);
+
+        updateUser(response.data);
+
+        Alert.alert('Perfil Atualizado!');
 
         navigation.goBack();
       } catch (err) {
@@ -79,15 +113,19 @@ const Profile: React.FC = () => {
           return;
         }
 
-        Alert.alert('Erro no Cadastro!', 'Confira os dados inseridos!');
+        Alert.alert('Erro na atualizacao!', 'Confira os dados inseridos!');
       }
     },
-    [navigation],
+    [navigation, updateUser],
   );
 
   const handleGoBack = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
+
+  const handleSignOut = useCallback(() => {
+    signOut();
+  }, [signOut]);
 
   return (
     <>
@@ -104,16 +142,13 @@ const Profile: React.FC = () => {
             <BackButton onPress={handleGoBack}>
               <Icon name="chevron-left" size={32} color="#999591" />
             </BackButton>
-
             <UserAvatarButton>
               <UserAvatar source={{ uri: user.avatar_url }} />
             </UserAvatarButton>
-
             <View>
               <Title>Meu perfil</Title>
             </View>
-
-            <Form ref={formRef} onSubmit={handleSubmit}>
+            <Form initialData={user} ref={formRef} onSubmit={handleSubmit}>
               <Input
                 autoCapitalize="words"
                 name="name"
@@ -140,7 +175,7 @@ const Profile: React.FC = () => {
               <Input
                 ref={oldPasswordInputRef}
                 secureTextEntry
-                name="old_passowrd"
+                name="old_password"
                 icon="key"
                 placeholder="Senha atual"
                 textContentType="newPassword"
@@ -172,6 +207,10 @@ const Profile: React.FC = () => {
                 Confirmar Mudancas
               </Button>
             </Form>
+            <Separator />
+            <SignOutButton onPress={handleSignOut}>
+              <SignOutButtonText>Sair do GoBarber</SignOutButtonText>
+            </SignOutButton>
           </Container>
         </ScrollView>
       </KeyboardAvoidingView>
