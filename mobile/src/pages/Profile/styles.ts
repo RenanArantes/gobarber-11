@@ -37,12 +37,12 @@ export const Separator = styled.View`
 `;
 
 export const SignOutButton = styled(RectButton)`
-  height: 50px;
+  height: 35px;
   background: #ff5400;
   border-radius: 10px;
   align-items: center;
   justify-content: center;
-  margin: 24px 24px 24px;
+  margin: 12px 24px 24px;
 `;
 
 export const SignOutButtonText = styled.Text`
