@@ -13,6 +13,31 @@
 
 <h4> O GoBarber é uma aplicação de delivery de serviços de barbearia feita durante o bootcamp <a href="https://rocketseat.com.br/gostack">GoStack</a> da <a href="https://rocketseat.com.br/"> Rocketseat </a>.</h4>
 
+# Tecnologias
+ - Typescript
+ - Padronização de código com Eslint, Prettier e Editor Config
+ - Testes com Jest e SuperTest
+ - Formatação de datas com __date-fns__
+ - Virtualização __docker__
+ - Armazenamento __postgreSQL__, __mongodb__ e __redis__
+ 
+
+**Backend**
+   - Cifragem com __bcryptjs__
+   - Middlewares com __celebrate__ e __cors__
+   - HTTP com __express__
+   - Templates de e-mail com __handlebars__
+   - Tokens com __jsonwebtoken__
+   - multipart/formdata com __multer__
+   - Envino de e-mails com __nodemailer__
+   - Controle de requisições com __rate-limiter-flexible__
+
+**Frontend** e **Mobile**
+  - Estilização com __styles-component__ e __polished__
+  - Validação de input's com __yup__
+  - Requisição com __axios__
+  - Formulários com __unform__
+  
 # Agendamento de serviços
 
 **Requisitos funcionais**
